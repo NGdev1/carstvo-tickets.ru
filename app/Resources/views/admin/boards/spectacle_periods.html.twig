@@ -1,0 +1,94 @@
+{% if spectaclePeriods %}
+    <div>Периоды для представлений:</div>
+
+    <div id="table-container">
+        <table id="spectacles">
+            <thead>
+            <tr>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 0, 'tabledit-span', 'number')">#</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 1, 'tabledit-span', 'string')">Название</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 2, 'tabledit-span', 'string')">Дата начала</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 3, 'tabledit-span', 'string')">Дата окончания</th>
+
+                <th>
+                    <div class="glyphicon glyphicon-book"></div>
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {% for item in spectaclePeriods %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td class="tabledit-input-date">{{ item.startDate | date("d.m.Y") }}</td>
+                    <td class="tabledit-input-date">{{ item.endDate | date("d.m.Y") }}</td>
+                    <td>
+                        <button class="button button-edit-table"
+                                onclick="window.open('{{ path('show_spectacle_period', {'id': item.id}) }}')">
+                            Подробно
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin: 30px"></div>
+
+    <script type="text/javascript">
+        $('#spectacles').Tabledit({
+            url: '{{ path('spectacle_periods_edit_action') }}',
+            inputClass: 'input_green',
+            editButton: true,
+            buttons: {
+                edit: {
+                    class: 'button button-edit-table',
+                    html: '<span class="glyphicon glyphicon-pencil"></span>',
+                    action: 'edit',
+                    method: 'POST'
+                },
+                delete: {
+                    class: 'button button-edit-table',
+                    html: '<span class="glyphicon glyphicon-trash"></span>',
+                    action: 'delete',
+                    method: 'DELETE'
+                },
+                save: {
+                    class: 'button button-save',
+                    html: 'Сохранить'
+                },
+                restore: {
+                    class: 'button btn-sm btn-warning',
+                    html: 'Восстановить',
+                    action: 'restore'
+                },
+                confirm: {
+                    class: 'button button-delete',
+                    html: 'Подтвердить'
+                }
+            },
+            columns: {
+                identifier: [0, 'id'],
+                editable: [[1, 'name'], [2, 'startDate'], [3, 'endDate']]
+            }
+        });
+
+        $('.tabledit-input-date').each(function () {
+            $row = $(this);
+
+            $row.find('input').addClass('js-datepicker');
+        });
+
+        $('.js-datepicker').datepicker();
+
+    </script>
+
+{% else %}
+
+    <div class="text center">Нет представлений в базе</div>
+
+{% endif %}

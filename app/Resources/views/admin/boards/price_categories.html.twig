@@ -1,0 +1,74 @@
+{% if priceCategories %}
+    <div>Ценовые категории:</div>
+
+    <div id="table-container">
+        <table id="priceCategories">
+            <thead>
+            <tr>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 0, 'tabledit-span', 'number')">#</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 1, 'tabledit-span', 'string')">Название</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 2, 'tabledit-span', 'number')">Цена</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {% for item in priceCategories %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.price }}</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin: 30px"></div>
+
+    <script type="text/javascript">
+        $('#priceCategories').Tabledit({
+            url: '{{ path('price_categories_edit_action') }}',
+            inputClass: 'input_green',
+            editButton: true,
+            buttons: {
+                edit: {
+                    class: 'button button-edit-table',
+                    html: '<span class="glyphicon glyphicon-pencil"></span>',
+                    action: 'edit',
+                    method: 'POST'
+                },
+                delete: {
+                    class: 'button button-edit-table',
+                    html: '<span class="glyphicon glyphicon-trash"></span>',
+                    action: 'delete',
+                    method: 'DELETE'
+                },
+                save: {
+                    class: 'button button-save',
+                    html: 'Сохранить'
+                },
+                restore: {
+                    class: 'button btn-sm btn-warning',
+                    html: 'Восстановить',
+                    action: 'restore'
+                },
+                confirm: {
+                    class: 'button button-delete',
+                    html: 'Подтвердить'
+                }
+            },
+            columns: {
+                identifier: [0, 'id'],
+                editable: [[1, 'name'], [2, 'price']]
+            }
+        });
+
+    </script>
+
+{% else %}
+
+    <div class="text center">Нет ценовых категорий</div>
+
+{% endif %}

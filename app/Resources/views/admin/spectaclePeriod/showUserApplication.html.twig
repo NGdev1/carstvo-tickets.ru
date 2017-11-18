@@ -1,0 +1,41 @@
+<div class="title center">Заявка:</div>
+<button class="rightButton" onclick="deleteUserApplication('{{ item.id }}')">
+    <span class="glyphicon glyphicon-trash"></span>
+</button>
+<button class="rightButton" onclick="editUserApplication('{{ item.id }}')">
+    <span class="glyphicon glyphicon-edit"></span>
+</button>
+<div class="title">{{ item.spectacleDate | date("d.m.Y") }}</div>
+<div class="text">Время: {{ item.spectacleTime }}</div>
+<div class="text">ФИО: {{ item.fullName }}</div>
+<div class="text">Телефон: {{ item.phone }}</div>
+<div class="text">Кол-во питающихся: {{ item.numberOfEaters }}</div>
+<div class="text">Комментарий: {{ item.comment }}</div>
+<div class="title">Билеты:</div>
+{% for ticket in item.tickets %}
+    <div class="text"> {{ ticket.priceCategory.name }} - {{ ticket.priceCategory.price }} рублей - {{ ticket.count }}
+        шт
+    </div>
+{% endfor %}
+<div class="text">Кол-во питающихся: {{ item.numberOfEaters }}</div>
+<div class="text">Общая стоимость: {{ item.cost }}</div>
+
+<script type="text/javascript">
+    function deleteUserApplication(id) {
+        $.ajax({
+            url: '{{ path('user_application_edit_action') }}',
+            type: "DELETE",
+            data: {
+                id: id
+            }
+        }).done(function (data) {
+            if (data.status == 'ok') {
+                acceptedApplications();
+            }
+        });
+    }
+
+    function editUserApplication(id) {
+        loadContent('/spectacle-period/{{ spectaclePeriod.id }}/user-application/' + id + '/edit', 'Редактировать заявку', true)
+    }
+</script>

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="center-content">
+
+            <div id="content">
+                <div class="title center error_text">{% block error_text %}{% endblock %}</div>
+            </div>
+
+            <div style="height: 220px; position: relative; top: 60px; z-index: -1; opacity: 100">
+                <img class="center" style="width: 290px;" src="{{ asset('images/Logo/logo.png') }}"/>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}

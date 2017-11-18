@@ -1,0 +1,69 @@
+{
+   "title": "Панель администратора",
+   "rightButton": "logout",
+   "leftButton": "site",
+   "url": "/admin",
+   "hasContent": false,
+   "menu": [
+      {
+         "title": "Периоды представлений",
+         "rightButton": "logout",
+         "leftButton": "back",
+         "url": "/admin/boards/spectacle-periods",
+         "hasContent": true,
+         "menu" : [
+            {
+               "title": "Добавить период",
+               "rightButton": "logout",
+               "leftButton": "back",
+               "url": "/admin/boards/spectacle-periods/add",
+               "hasContent": true
+            }
+         ]
+      },
+      {
+         "title": "Ценовые категории",
+         "rightButton": "logout",
+         "leftButton": "back",
+         "url": "/admin/boards/price-categories",
+         "hasContent": true,
+         "menu" : [
+            {
+               "title": "Добавить",
+               "rightButton": "logout",
+               "leftButton": "back",
+               "url": "/admin/boards/price-categories/add",
+               "hasContent": true
+            }
+         ]
+      },
+      {
+         "title": "Новые заявки",
+         "rightButton": "logout",
+         "leftButton": "back",
+         "url": "/admin/boards/user-applications",
+         "hasContent": true
+      },
+      {
+         "title": "Регистрация звонка",
+         "rightButton": "logout",
+         "leftButton": "back",
+         "url": "/admin/boards/user-applications/add",
+         "hasContent": true
+      },
+      {
+         "title": "База именинников",
+         "rightButton": "logout",
+         "leftButton": "back",
+         "url": "/admin/boards/birthdayboys",
+         "hasContent": false
+      },
+      {
+         "title": "Кассир",
+         "rightButton": "logout",
+         "leftButton": "back",
+         "url": "/admin/cashier",
+         "hasContent": false
+      }
+   ]
+}

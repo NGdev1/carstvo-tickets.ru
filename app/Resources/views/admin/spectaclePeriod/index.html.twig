@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ spectaclePeriod.name }} {% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('css/site/style.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/loading.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/spectacles-period-admin.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/menu.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/glyphicon.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.structure.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.theme.min.css') }}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        var contentContainer;
+        var loadingIndicator;
+
+        $(document).ready(function () {
+            contentContainer = $('#content');
+            loadingIndicator = $('#circleG');
+
+            loadingIndicator.hide();
+            setSelected('{{ content }}');
+        });
+
+        function loadContent(url, title, addToHistory) {
+            if (url != undefined && contentContainer != undefined) {
+
+                loadingIndicator.show();
+                contentContainer.hide();
+
+                $.ajax({
+                    url: url,
+                    type: "GET"
+                }).done(function (data) {
+                    document.title = title;
+
+                    loadingIndicator.hide();
+
+                    contentContainer.fadeTo(200, 1);
+                    contentContainer.html(data);
+
+                    if (addToHistory) {
+                        window.history.pushState({"html": data, "pageTitle": title}, title, url);
+                    }
+                });
+            }
+        }
+
+        function showDialog(title, message) {
+            var dialogMessage = $( "<div/>" );
+            var messageContainer = $('<p/>', {
+                html: message
+            });
+            dialogMessage.append(messageContainer);
+
+            dialogMessage.dialog({
+                title: title,
+                modal: true,
+                buttons: {
+                    "Закрыть": function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+        }
+
+        function setSelected(selected) {
+            $('.selected').removeClass('selected');
+            $('#' + selected).addClass('selected', 100);
+        }
+
+        function edit() {
+            loadContent('{{ path('spectacle_period_edit_view', {'id': spectaclePeriod.id}) }}', "Редактирование", true);
+            setSelected('edit');
+        }
+
+        function acceptedApplications() {
+            loadContent('{{ path('spectacle_period_accepted_applications', {'id': spectaclePeriod.id}) }}', "Подтвержденные заявки", true);
+            setSelected('acceptedApplications');
+        }
+
+        function notAcceptedApplications() {
+            loadContent('{{ path('spectacle_period_not_accepted_applications', {'id': spectaclePeriod.id}) }}', "Неподтвержденные заявки", true);
+            setSelected('notAcceptedApplications');
+        }
+
+        function addUserApplication() {
+            loadContent('{{ path('spectacle_period_add_user_application', {'id': spectaclePeriod.id}) }}', "Добавить заявку", true);
+            setSelected('addUserApplication');
+        }
+
+        function userApplications() {
+            loadContent('{{ path('spectacle_period_all_applications', {'id': spectaclePeriod.id}) }}', "Все заявки", true);
+            setSelected('userApplications');
+        }
+    </script>
+
+{% endblock %}
+
+{% block body %}
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('js/datepicker-ru.js') }}"></script>
+
+    <div id="dialog-message" style="display: none">
+        <p id="message-container">
+        </p>
+    </div>
+
+    <div class="title-customer center">Период представлений: {{ spectaclePeriod.name }}</div>
+    <div class="container">
+
+        <div class="menu-container">
+            <a id="edit" class="button-menu" onclick="edit()">Редактирование</a>
+            <a id="userApplications" class="button-menu" onclick="userApplications()">Все заявки</a>
+            <a id="notAcceptedApplications" class="button-menu" onclick="notAcceptedApplications()">Неподтвержденные заявки</a>
+            <a id="acceptedApplications" class="button-menu" onclick="acceptedApplications()">Подтвержденные заявки</a>
+            <a id="addUserApplication" class="button-menu" onclick="addUserApplication()">Добавить заявку</a>
+            {#<div class="buttonAdd">+</div>#}
+        </div>
+
+
+        <div class="center-content">
+            <div id="circleG">
+                <div class="title center">Загрузка</div>
+                <div id="circleG_1" class="circleG"></div>
+                <div id="circleG_2" class="circleG"></div>
+                <div id="circleG_3" class="circleG"></div>
+            </div>
+
+            <div id="content">
+                {% if content == 'edit' %}
+
+                    {% include 'admin/spectaclePeriod/edit.html.twig' %}
+
+                {% elseif content == 'acceptedApplications' or content == 'notAcceptedApplications' or content == 'userApplications'%}
+
+                    {% include 'admin/spectaclePeriod/userApplications.html.twig' %}
+
+                {% elseif content == 'addUserApplication' %}
+
+                    {% include 'admin/spectaclePeriod/addUserApplication.html.twig' %}
+
+                {% elseif content == 'editUserApplication' %}
+
+                    {% include 'admin/spectaclePeriod/editUserApplication.html.twig' %}
+
+                {% else %}
+
+                    <div class="text">
+                        <div class="glyphicon glyphicon-arrow-left"></div>
+                        Выберите пункт меню
+                    </div>
+
+                {% endif %}
+            </div>
+        </div>
+
+        {#<div class="center image-bottom-logo" style="margin-left: 300px"></div>#}
+        <!-- /container -->
+    </div>
+
+{% endblock %}

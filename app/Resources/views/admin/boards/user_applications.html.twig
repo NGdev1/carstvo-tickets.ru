@@ -1,0 +1,142 @@
+{% if userApplications %}
+    <div>Неподтвержденные заявки:</div>
+
+    <div id="table-container">
+        <table id="spectacles">
+            <thead>
+            <tr>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 0, 'tabledit-span', 'number')">#</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 1, 'tabledit-span', 'string')">Фио заказчика</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 2, 'tabledit-span', 'string')">Представление</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 3, 'tabledit-span', 'string')">Дата представления</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 4, 'tabledit-span', 'string')">Время</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 5, 'tabledit-span', 'string')">Телефон</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 6, 'tabledit-span', 'number')"><span class="glyphicon glyphicon-ruble"></span></th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 7, 'tabledit-span', 'string')">
+                    <span class="glyphicon glyphicon-check"></span>
+                </th>
+                <th>
+                    <div class="glyphicon glyphicon-book"></div>
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {% for item in userApplications %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.fullName }}</td>
+                    <td>{{ item.spectaclePeriod.name }}</td>
+                    <td class="tabledit-input-date">{{ item.spectacleDate | date("d.m.Y") }}</td>
+                    <td>{{ item.spectacleTime }}</td>
+                    <td>{{ item.phone }}</td>
+                    <td>
+                        <button class="button"
+                                onclick="showDialog('Данные о билетах',
+                                '{% for ticket in item.tickets %}<div> {{ ticket.priceCategory.name }} - {{ ticket.priceCategory.price }} рублей - {{ ticket.count }} шт</div>{% endfor %}<br/><div>Кол-во питающихся: {{ item.numberOfEaters }}</div><br/><div>Общая стоимость: {{ item.cost }}</div>'
+                                )">
+                            Смотреть</button>
+                    </td>
+                    <td>{% if item.checkedByAdmin %}Подтверждена{% else %}Не подтверждена{% endif %}</td>
+                    <td>
+                        <button class="button button-edit-table"
+                                onclick="window.open('')">
+                            Подробно
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        var normalContentWidth = $('.center-content').width();
+        function setNormalContentWidth() {
+            $('.center-content').animate({
+                width: normalContentWidth
+            }, 200 );
+        }
+
+        function setBroaderContentWidth(){
+            $('.center-content').animate({
+                width: $(window).width() * 0.8
+            }, 200 );
+        }
+
+        //called from finder
+        function onBoardDestroy() {
+            setNormalContentWidth();
+        }
+
+        //called when board opened
+        setBroaderContentWidth();
+
+        $('#spectacles').Tabledit({
+            url: '{{ path('user_application_edit_action') }}',
+            inputClass: 'input_green',
+            editButton: true,
+            buttons: {
+                edit: {
+                    class: 'button button-edit-table',
+                    html: '<span class="glyphicon glyphicon-pencil"></span>',
+                    action: 'edit',
+                    method: 'POST'
+                },
+                delete: {
+                    class: 'button button-edit-table',
+                    html: '<span class="glyphicon glyphicon-trash"></span>',
+                    action: 'delete',
+                    method: 'DELETE'
+                },
+                save: {
+                    class: 'button button-save',
+                    html: 'Сохранить'
+                },
+                restore: {
+                    class: 'button btn-sm btn-warning',
+                    html: 'Восстановить',
+                    action: 'restore'
+                },
+                confirm: {
+                    class: 'button button-delete',
+                    html: 'Подтвердить'
+                }
+            },
+            columns: {
+                identifier: [0, 'id'],
+                editable: [
+                    [1, 'fullName'],
+                    [3, 'spectacleDate'],
+                    [4, 'spectacleTime', {
+                        '10:00': '10:00',
+                        '12:00': '12:00',
+                        '14:00': '14:00',
+                        '16:00': '16:00'
+                    }],
+                    [5, 'phone'],
+                    [7, 'checkedByAdmin', {
+                        0: "Не подтверждена",
+                        1: "Подтверждена"
+                    }]
+                ]
+            }
+        });
+
+        $('.tabledit-input-date').each(function () {
+            $row = $(this);
+
+            $row.find('input').addClass('js-datepicker');
+        });
+
+        $('.js-datepicker').datepicker();
+
+    </script>
+
+{% else %}
+
+    <div class="text center">Нет новых заявок</div>
+
+{% endif %}

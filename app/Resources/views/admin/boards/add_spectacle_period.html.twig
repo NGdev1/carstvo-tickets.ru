@@ -1,0 +1,170 @@
+{{ form_start(form, {'attr': {'id': 'spectacle_form'}}) }}
+
+{{ form_widget(form) }}
+
+<div class="text">Ценовые категории:</div>
+
+<div style="margin-top: 20px" id="price_categories_container">
+</div>
+
+<input class="input_green" type="text" name="price_categories" placeholder="Ценовые категории..."/>
+
+<div style="height: 0">
+    <div id="price_categories_offer_list_container" class="offer_list">
+
+    </div>
+</div>
+
+<input type="submit" class="button-primary-2"/>
+
+{{ form_end(form) }}
+
+<script type="text/javascript">
+
+    var form = $('#spectacle_form');
+
+    form.submit(function () {
+        var request = $.ajax({
+            url: '{{ path('add_spectacle_period_action') }}',
+            type: 'POST',
+            data: form.serialize() + '&priceCategories=' + JSON.stringify(priceCategories)
+        });
+
+        request.done(function (data) {
+            if (data.status == 'ok') {
+                back();
+            }
+        });
+
+        request.fail(function (data) {
+            showDialog('Ошибка с сервера', data.responseJSON.errors);
+        });
+
+        return false;
+    });
+
+    $.datepicker.setDefaults( $.datepicker.regional[ "ru" ] );
+
+    $('.js-datepicker').datepicker({
+        inline: true
+    });
+
+</script>
+
+<script type="text/javascript">
+    var priceCategories = [];
+
+    function find(array, value) {
+
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] == value) return i;
+        }
+
+        return -1;
+    }
+
+    function removePriceCategory(id) {
+        delete priceCategories[find(priceCategories, id)];
+
+        var containerPriceCategories = $('#price_categories_container');
+        containerPriceCategories.find('div[priceCategoryId=' + id + ']').hide();
+    }
+
+    function addPriceCategory(id, name) {
+        if (find(priceCategories, id) != -1) return;
+
+        priceCategories.push(id);
+
+        var containerPriceCategories = $('#price_categories_container');
+
+        var priceCategory = $('<div/>', {
+            priceCategoryId: id,
+            'class': 'selected_item'
+        });
+
+        var text = $('<div/>', {
+            'class': 'text',
+            style : 'font-size: 16px; font-weight: 400; color: #555;',
+            text: name
+        });
+
+        var removeButton = $('<button/>', {
+            'class': 'rightButton',
+            'onclick': 'removePriceCategory(' + id + ')',
+            'type': 'button',
+            text: 'x'
+        });
+
+        priceCategory.append(removeButton);
+        priceCategory.append(text);
+        containerPriceCategories.prepend(priceCategory);
+    }
+
+    //Следующие функции должны быть в методе который вызывается после загрузки страницы
+    //но здесь все подгружается в ajax. поэтому просто кодом.
+
+    var inputPriceCategories = $('input[name=price_categories]');
+    var listPriceCategories = $('#price_categories_offer_list_container');
+
+    listPriceCategories.hide();
+
+    function updateListPriceCategories(showAll) {
+        if (inputPriceCategories.val() == '' && !showAll) {
+            hideListPriceCategories();
+            return;
+        }
+
+        var query = showAll ? '*' : inputPriceCategories.val();
+        var url = "{{ path('find_price_categories_action') }}?query=" + query;
+
+        $.ajax({
+            url: url
+        }).done(function (responce) {
+            listPriceCategories.html('');
+
+            var needToShow = false;
+
+            if (responce.status != 'ok') return;
+            var resultList = responce.list;
+
+            if (resultList.length == 0) {
+                listPriceCategories.hide(500);
+                return;
+            } else if (listPriceCategories.html() == '') {
+                needToShow = true;
+            }
+
+            for (var i = 0; i < resultList.length; i++) {
+                var line = $('<div/>', {
+                    text: resultList[i].name + ' - ' + resultList[i].price,
+                    onclick: 'addPriceCategory(' + resultList[i].id + ',\'' + resultList[i].name + ' ' + resultList[i].price  + '\')',
+                    'class': 'offer_list_item'
+                });
+
+                listPriceCategories.prepend(line);
+            }
+
+            if (needToShow) {
+                listPriceCategories.show(300);
+            }
+        });
+    }
+
+    function hideListPriceCategories() {
+        listPriceCategories.hide(400);
+    }
+
+    inputPriceCategories.focusout(function (e) {
+        hideListPriceCategories();
+        inputPriceCategories.val('');
+    });
+
+    inputPriceCategories.keyup(function (e) {
+        updateListPriceCategories(false);
+    });
+
+    inputPriceCategories.focus(function (e) {
+        updateListPriceCategories(true);
+    });
+
+</script>

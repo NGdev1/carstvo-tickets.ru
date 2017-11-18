@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Панель администратора {% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/table.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/glyphicon.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.structure.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.theme.min.css') }}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('js/datepicker-ru.js') }}"></script>
+    <script src="{{ asset('js/finder.js') }}"></script>
+    <script src="{{ asset('js/buttonsDistributor.js') }}"></script>
+    <script src="{{ asset('js/jquery.tabledit.js') }}"></script>
+    <script src="{{ asset('js/jquery.tablefilter.js') }}"></script>
+    <script src="{{ asset('js/jquery.tablesort.js') }}"></script>
+
+    <script type="text/javascript">
+
+        function logout() {
+            window.location.href = '{{ path('admin_logout') }}';
+        }
+
+        function site() {
+            window.location.href = '{{ path('homepage') }}';
+        }
+
+        function back() {
+            if (finder.depth == 0) return;
+
+            finder.upFolders(1);
+            if (typeof onBoardDestroy != 'undefined') {
+                onBoardDestroy();
+            }
+            reload();
+        }
+
+        function goDeeper(pos) {
+            finder.addFolder(pos);
+            if (typeof onBoardDestroy != 'undefined') {
+                onBoardDestroy();
+            }
+            reload();
+        }
+
+        function setDepth(depth) {
+            finder.setDepth(depth);
+            if (typeof onBoardDestroy != 'undefined') {
+                onBoardDestroy();
+            }
+            reload();
+        }
+
+        $(document).on('keyup', function (event) {
+            switch (event.keyCode) {
+                case 27: // Escape.
+                    back();
+                    break;
+            }
+        });
+
+        function showDialog(title, message) {
+            var dialogMessage = $("<div/>");
+            var messageContainer = $('<p/>', {
+                html: message
+            });
+            dialogMessage.append(messageContainer);
+
+            dialogMessage.dialog({
+                title: title,
+                modal: true,
+                buttons: {
+                    "Закрыть": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="center-content">
+
+            <div class="navigation-bar">
+                <div id="leftButtonContainer">
+                    <a id="buttonLeft" class="leftButton"></a>
+                </div>
+
+                <div id="rightButtonContainer">
+                    <a id="buttonRight" class="rightButton"></a>
+                </div>
+                <div id="title" class="title center">Панель администратора</div>
+            </div>
+
+            <div id="pathContainer">
+
+            </div>
+
+            <div id="content">
+
+            </div>
+
+            <div id="buttonsContainer">
+
+            </div>
+
+            <div style="height: 220px; position: relative; top: 60px; z-index: -1; opacity: 100">
+                <img class="center" style="width: 290px;" src="{{ asset('images/Logo/logo.png') }}"/>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}

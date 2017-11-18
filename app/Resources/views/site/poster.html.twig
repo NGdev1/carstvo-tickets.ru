@@ -1,0 +1,20 @@
+{% if spectaclePeriods %}
+    {% for item in spectaclePeriods %}
+        <a onclick="loadContent('{{ path('show_spectacle', { 'id': item.id }) }}', '{{ item.name }}', true)" class="spectacle-cell" style="cursor: pointer;">
+            <div class="spectacle">
+                <div class="center"
+                     style="font-size: 20px; margin: 17px !important; color: #474747">{{ item.name }}</div>
+
+                <div class="text" style="margin: 20px; font-weight: normal;">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    {{ item.startDate | date("d.m.Y", "Europe/Moscow") }} - {{ item.endDate | date("d.m.Y", "Europe/Moscow") }}</div>
+
+                <div class="text" style="margin: 20px">{{ item.description }}</div>
+                <div class="text" style="margin: 20px; padding-bottom: 30px">Цены: {% for price in item.ticketPrices %}  {{ price.price }}   {% endfor %}</div>
+            </div>
+        </a>
+
+    {% endfor %}
+{% else %}
+    <div class="title center">Нет предстоящих спектаклей</div>
+{% endif %}

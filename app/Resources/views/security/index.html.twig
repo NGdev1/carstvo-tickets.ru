@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Вход в админку{% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/singin.css') }}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <form class="form-center-content" action="{{ path('security_admin_login') }}" method="post">
+            <div class="form-signin-heading">Вход</div>
+            <div class="title center">Панель администратора</div>
+            <div class="text center">Для администратора, кассира и агента – расширенный функционал для управления представлениями, бронь и продажа билетов на представление.
+            </div>
+
+            {% if error %}
+                <div class="error_text">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <label for="inputName" class="sr-only">Имя</label>
+            <input name="_username" value="{{ last_username }}" type="text" id="inputName" class="form-control" placeholder="Имя" required="" autofocus="">
+            <label for="inputPassword" class="sr-only">Пароль</label>
+            <input name="_password" type="password" id="inputPassword" class="form-control" placeholder="Пароль" required="">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+            <button name="submit" class="login-button" type="submit">Войти</button>
+            <a class="register-button" href="{{ path('homepage') }}">Сайт</a>
+        </form>
+
+    </div>
+{% endblock %}

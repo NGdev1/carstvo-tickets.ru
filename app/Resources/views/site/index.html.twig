@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Тридквятое царство {% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('css/site/style.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/glyphicon.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/loading.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.structure.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/jquery-ui.theme.min.css') }}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('js/datepicker-ru.js') }}"></script>
+
+    <script type="text/javascript">
+
+        var contentContainer;
+        var loadingIndicator;
+
+        $(document).ready(function () {
+            contentContainer = $('#content');
+            loadingIndicator = $('#circleG');
+
+            loadingIndicator.hide();
+        });
+
+        function loadContent(url, title, addToHistory) {
+            if (url != undefined && contentContainer != undefined) {
+
+                loadingIndicator.show();
+                contentContainer.hide();
+
+                $.ajax({
+                    url: url,
+                    type: "GET"
+                }).done(function (data) {
+                    document.title = title;
+
+                    loadingIndicator.hide();
+
+                    contentContainer.fadeTo(200, 1);
+                    contentContainer.html(data);
+
+                    if (addToHistory) {
+                        window.history.pushState({"html": data, "pageTitle": title}, title, url);
+                    }
+                });
+            }
+        }
+
+        function showDialog(title, message) {
+            var dialogMessage = $("<div/>");
+            var messageContainer = $('<p/>', {
+                html: message
+            });
+            dialogMessage.append(messageContainer);
+
+            dialogMessage.dialog({
+                title: title,
+                modal: true,
+                buttons: {
+                    "Закрыть": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
+
+{% block body %}
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('js/datepicker-ru.js') }}"></script>
+    <div class="gradient" style="padding: 5px;">
+
+        <a onclick="loadContent('{{ path('homepage') }}', 'Тридевятое царство', true)" id="title" class="text-main center">Афиша</a>
+
+    </div>
+
+    <div class="center-content">
+        <div id="circleG" style="margin-top: 25px">
+            <div class="title center" style="color: #575757">Загрузка</div>
+            <div id="circleG_1" class="circleG"></div>
+            <div id="circleG_2" class="circleG"></div>
+            <div id="circleG_3" class="circleG"></div>
+        </div>
+
+        <div id="content">
+            {% if content == 'poster' %}
+
+                {% include 'site/poster.html.twig' %}
+
+            {% elseif content == 'spectacle' %}
+
+                {% include 'site/spectacle.html.twig' %}
+
+            {% endif %}
+        </div>
+
+    </div>
+
+
+    <div class="center image-bottom-logo"></div>
+    <!-- /container -->
+
+{% endblock %}

@@ -1,0 +1,84 @@
+<div class="spectacle-cell" style="width: 70%; margin: 0 auto; display: block">
+    <div class="spectacle">
+        <button class="button-secondary" onclick="loadContent('{{ path('homepage') }}', 'Тридевятое царство', true)">
+            Назад
+        </button>
+        <div class="center"
+             style="font-size: 20px; margin: 25px !important; color: #474747">{{ spectaclePeriod.name }}</div>
+
+        <div class="text" style="margin: 20px; font-weight: normal;">
+            <span class="glyphicon glyphicon-calendar"></span>
+            {{ spectaclePeriod.startDate | date("d.m.Y") }} - {{ spectaclePeriod.endDate | date("d.m.Y") }}</div>
+
+        <div class="text" style="margin: 20px">{{ spectaclePeriod.description }}</div>
+        <div class="text" style="margin: 20px">Стоимость питания: {{ spectaclePeriod.costOfFood }}</div>
+        <div class="text" style="margin: 20px">
+            Цены: {% for price in spectaclePeriod.ticketPrices %}  {{ price.price }}   {% endfor %}</div>
+
+        <div style="margin: 0 20px 0 20px; padding-bottom: 11px; padding-top: 10px;">
+            <div class="center"
+                 style="font-size: 20px; color: #474747">Бронь:
+            </div>
+
+            {{ form_start(form, {'attr': {'id': 'user_application_form'}}) }}
+
+            {{ form_widget(form) }}
+
+            <input name="spectacle_id" type="hidden" value="{{ spectaclePeriod.id }}">
+
+            <div class="center"
+                 style="font-size: 20px; color: #474747">Кол-во билетов:
+            </div>
+
+            {% for price in spectaclePeriod.ticketPrices %}
+                <div class="text">{{ price.name }} ({{ price.price }} рублей)</div>
+                <input type="number" class="input_green" name="tickets[{{ price.id }}]" value="0">
+            {% endfor %}
+
+            <input type="submit" class="button-primary center" value="Забронировать"/>
+
+            {{ form_end(form) }}
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var form = $('#user_application_form');
+
+            form.submit(function () {
+                var request = $.ajax({
+                    url: '{{ path('add_user_application_action') }}',
+                    type: 'POST',
+                    data: form.serialize()
+                });
+
+                request.done(function (data) {
+                    if (data.status == 'ok') {
+                        loadContent('{{ path('homepage') }}', 'Тридевятое царство', true);
+                        showDialog('Готово', 'Заявка принята. Вам перезвонят в ближаешее время, чтобы подтвердить бронь.');
+                    }
+                });
+
+                request.fail(function (data) {
+                    showDialog('Ошибка с сервера', data.responseJSON.errors);
+                });
+
+                return false;
+            });
+
+            $.datepicker.setDefaults($.datepicker.regional["ru"]);
+
+            var startDate = new Date('{{ spectaclePeriod.startDate | date("Y-m-d") }}');
+            var endDate = new Date('{{ spectaclePeriod.endDate | date("Y-m-d") }}');
+
+            $('.js-datepicker').datepicker({
+                inline: true,
+                minDate: startDate,
+                maxDate: endDate
+            });
+        });
+
+    </script>
+</div>
