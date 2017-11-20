@@ -1,9 +1,16 @@
 <div class="contact-form">
+    <div class="title center">Редактирование заявки</div>
+
     {{ form_start(form, {'attr': {'id': 'user_application_form'}}) }}
 
     {{ form_widget(form) }}
 
     <input name="spectacle_id" type="hidden" value="{{ spectaclePeriod.id }}">
+
+    <div class="checkbox">
+    <label for="checkedByAdmin">Проверено администратором</label>
+    <input name="checkedByAdmin" class="js-checkbox" type="checkbox" id="checkedByAdmin" {% if userApplication.checkedByAdmin %}checked{% endif %}>
+    </div>
 
     <div class="center"
          style="font-size: 20px; color: #474747">Кол-во билетов:
@@ -11,10 +18,59 @@
 
     {% for price in spectaclePeriod.ticketPrices %}
         <div class="text">{{ price.name }} ({{ price.price }} рублей)</div>
-        <input type="number" class="input_green" name="tickets[{{ price.id }}]" value="0">
+        <input type="number" class="input_green" name="tickets[{{ price.id }}]" value="{% for ticket in userApplication.tickets if ticket.priceCategory == price %}{{ ticket.count }}{% endfor %}">
     {% endfor %}
 
-    <input type="submit" class="button" value="Забронировать"/>
+    <input type="submit" class="button-send" value="Сохранить"/>
 
     {{ form_end(form) }}
 </div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var form = $('#user_application_form');
+
+        form.submit(function () {
+            loadingIndicator.show();
+            contentContainer.hide();
+
+            var request = $.ajax({
+                url: '{{ path('user_application_edit_form_action', {'id' : userApplication.id}) }}',
+                type: 'POST',
+                data: form.serialize()
+            });
+
+            request.always(function () {
+                loadingIndicator.hide();
+                contentContainer.show();
+            });
+
+            request.done(function (data) {
+                if (data.status == 'ok') {
+                    showDialog('Готово', '<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>Информация обновлена');
+                }
+            });
+
+            request.fail(function (data) {
+                showDialog('Ошибка с сервера', data.responseJSON.errors);
+            });
+
+            return false;
+        });
+
+        $.datepicker.setDefaults($.datepicker.regional["ru"]);
+
+        var startDate = new Date('{{ spectaclePeriod.startDate | date("Y-m-d") }}');
+        var endDate = new Date('{{ spectaclePeriod.endDate | date("Y-m-d") }}');
+
+        $('.js-datepicker').datepicker({
+            inline: true,
+            minDate: startDate,
+            maxDate: endDate
+        });
+
+        $('.js-checkbox').checkboxradio();
+    });
+
+</script>

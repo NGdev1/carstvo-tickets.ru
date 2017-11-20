@@ -7,7 +7,7 @@ use AppBundle\Entity\SpectaclePeriod;
 use AppBundle\Entity\Ticket;
 use AppBundle\Entity\UserApplication;
 use AppBundle\Form\UserApplicationType;
-use DateTime;
+use AppBundle\Repository\TicketRepository;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,7 +24,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class UserApplicationController extends Controller
 {
     /**
-     * @Route("user-applications/add", name="add_user_application_action")
+     * @Route("user-applications/add", name="add_user_application_by_admin_action")
      * @Method("POST")
      */
     public function addUserApplicationAction(Request $request)
@@ -47,44 +47,31 @@ class UserApplicationController extends Controller
             throw new Exception("Спектакль не определен");
         }
 
+        $userApplication->setCheckedByAdmin($request->get('checkedByAdmin'));
+
         $spectacle = $entityManager->getRepository(SpectaclePeriod::class)->find($request->get('spectacle_id'));
         $userApplication->setSpectaclePeriod($spectacle);
 
         $userApplication->setComment($request->get('comment'));
         $userApplication->setPaid(0);
 
-        if ($request->get('checkedByAdmin')) {
-            $userApplication->setCheckedByAdmin(true);
-        } else {
-            $userApplication->setCheckedByAdmin(false);
-        }
+        $userApplication->setCheckedByAdmin(true);
 
         if (!$request->get('tickets')) {
             throw new Exception("Нет билетов");
         }
 
         $ticketsArray = $request->get('tickets');
-        $keys = array_keys($ticketsArray);
         $priceCategoryRepository = $entityManager->getRepository(PriceCategory::class);
 
-        if (count($keys) == 0) {
-            throw new Exception("Нет билетов");
-        }
+        $this->get('user_application_service')->addTicketsCount(
+            $ticketsArray,
+            $priceCategoryRepository,
+            $entityManager,
+            $userApplication
+        );
 
-        for($i = 0; $i < count($keys); $i++){
-            if($ticketsArray[$keys[$i]] != 0) {
-                $ticket = new Ticket();
-
-                $ticket->setPriceCategory($priceCategoryRepository->find($keys[$i]));
-                $ticket->setCount($ticketsArray[$keys[$i]]);
-
-                $entityManager->persist($ticket);
-                $ticket->setApplication($userApplication);
-                $userApplication->addTicket($ticket);
-            }
-        }
-
-        $this->get('price_calculator')->calculateAndSetCost($userApplication);
+        $this->get('user_application_service')->calculateAndSetCost($userApplication);
 
         $userApplication->setDebt($userApplication->getCost());
         $userApplication->setPaid(0);
@@ -126,7 +113,7 @@ class UserApplicationController extends Controller
      * @Route("user-applications/")
      * @Method("POST")
      */
-    public function userApplicationEditFromTableAction(Request $request, LoggerInterface $logger)
+    public function userApplicationEditFromTableAction(Request $request)
     {
         $request->setRequestFormat('json');
 
@@ -170,28 +157,57 @@ class UserApplicationController extends Controller
      * @Route("user-applications/{id}/edit", name="user_application_edit_form_action")
      * @Method("POST")
      */
-    public function userApplicationEditAction(Request $request, UserApplication $userApplication)
+    public function userApplicationEditAction(Request $request, UserApplication $userApplication, LoggerInterface $logger)
     {
         $request->setRequestFormat('json');
 
         $form = $this->createForm(UserApplicationType::class, $userApplication);
 
-        $entityManager = $this->getDoctrine()->getManager();
-
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            $result = array(
-                'status' => 'ok',//ok | error
-            );
-
-            return new Response(json_encode($result));
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            throw new Exception("Введены неверные данные формы");
         }
 
+        $entityManager = $this->getDoctrine()->getManager();
+
+        if (!$request->get('spectacle_id')) {
+            throw new Exception("Спектакль не определен");
+        }
+
+        $userApplication->setCheckedByAdmin($request->get('checkedByAdmin') == 'on');
+
+        $spectacle = $entityManager->getRepository(SpectaclePeriod::class)->find($request->get('spectacle_id'));
+        $userApplication->setSpectaclePeriod($spectacle);
+
+        $userApplication->setComment($request->get('comment'));
+        $userApplication->setPaid(0);
+
+        if (!$request->get('tickets')) {
+            throw new Exception("Нет билетов");
+        }
+
+        $ticketsArray = $request->get('tickets');
+
+        $this->get('user_application_service')->setTicketsCount(
+            $ticketsArray,
+            $entityManager->getRepository(Ticket::class),
+            $entityManager->getRepository(PriceCategory::class),
+            $entityManager,
+            $userApplication,
+            $logger
+        );
+
+        $this->get('user_application_service')->calculateAndSetCost($userApplication);
+
+        $userApplication->setDebt($userApplication->getCost());
+        $userApplication->setPaid(0);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->flush();
+
         $result = array(
-            'status' => 'error',//ok | error
+            'status' => 'ok',//ok | error
         );
 
         return new Response(json_encode($result));

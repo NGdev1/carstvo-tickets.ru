@@ -1,20 +1,21 @@
 <div class="contact-form">
-{{ form_start(form, {'attr': {'id': 'user_application_form'}}) }}
+    <div class="title center">Добавить заявку</div>
+    {{ form_start(form, {'attr': {'id': 'user_application_form'}}) }}
 
-            {{ form_widget(form) }}
+    {{ form_widget(form) }}
 
-<input name="spectacle_id" type="hidden" value="{{ spectaclePeriod.id }}">
+    <input name="spectacle_id" type="hidden" value="{{ spectaclePeriod.id }}">
 
-<div class="center"
-     style="font-size: 20px; color: #474747">Кол-во билетов:
-</div>
+    <div class="center"
+         style="font-size: 20px; color: #474747">Кол-во билетов:
+    </div>
 
-{% for price in spectaclePeriod.ticketPrices %}
-    <div class="text">{{ price.name }} ({{ price.price }} рублей)</div>
-    <input type="number" class="input_green" name="tickets[{{ price.id }}]" value="0">
-{% endfor %}
+    {% for price in spectaclePeriod.ticketPrices %}
+        <div class="text">{{ price.name }} ({{ price.price }} рублей)</div>
+        <input type="number" class="input_green" name="tickets[{{ price.id }}]" value="0">
+    {% endfor %}
 
-<input type="submit" class="button" value="Забронировать"/>
+    <input type="submit" class="button" value="Забронировать"/>
 
-{{ form_end(form) }}
+    {{ form_end(form) }}
 </div>

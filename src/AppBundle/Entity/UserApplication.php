@@ -296,7 +296,7 @@ class UserApplication
     }
 
     /**
-     * @return Ticket[]
+     * @return Ticket[] | ArrayCollection
      */
     public function getTickets()
     {

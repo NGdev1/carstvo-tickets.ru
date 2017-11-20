@@ -43,23 +43,31 @@ class SpectaclePeriodDetailedController extends Controller
      */
     public function spectaclesPeriodEditAction(Request $request, SpectaclePeriod $spectaclePeriod)
     {
-        $form = $this->createForm(SpectaclePeriodType::class, $spectaclePeriod, array(
+        $form = $this->createForm(
+            SpectaclePeriodType::class,
+            $spectaclePeriod,
+            array(
                 'action' => $this->generateUrl('spectacle_periods_edit_action'),
-                'method' => 'POST'
+                'method' => 'POST',
             )
         );
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin/spectaclePeriod/edit.html.twig', [
-                'spectaclePeriod' => $spectaclePeriod,
-                'form' => $form->createView()
-            ]);
+            return $this->render(
+                'admin/spectaclePeriod/edit.html.twig',
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'form' => $form->createView(),
+                ]
+            );
         } else {
-            return $this->spectaclePeriodRenderFullView([
-                'spectaclePeriod' => $spectaclePeriod,
-                'content' => 'edit',
-                'form' => $form->createView()
-            ]);
+            return $this->spectaclePeriodRenderFullView(
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'content' => 'edit',
+                    'form' => $form->createView(),
+                ]
+            );
         }
     }
 
@@ -69,19 +77,24 @@ class SpectaclePeriodDetailedController extends Controller
      */
     public function allApplicationsAction(Request $request, SpectaclePeriod $spectaclePeriod)
     {
-        $userApplications = $this->getDoctrine()->getRepository(UserApplication::class)->findAll();
+        $userApplications = $this->getDoctrine()->getRepository(UserApplication::class)->findAllFor($spectaclePeriod);
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin/spectaclePeriod/userApplications.html.twig', [
-                'spectaclePeriod' => $spectaclePeriod,
-                'userApplications' => $userApplications
-            ]);
+            return $this->render(
+                'admin/spectaclePeriod/userApplications.html.twig',
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplications' => $userApplications,
+                ]
+            );
         } else {
-            return $this->spectaclePeriodRenderFullView([
-                'spectaclePeriod' => $spectaclePeriod,
-                'userApplications' => $userApplications,
-                'content' => 'userApplications'
-            ]);
+            return $this->spectaclePeriodRenderFullView(
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplications' => $userApplications,
+                    'content' => 'userApplications',
+                ]
+            );
         }
     }
 
@@ -91,19 +104,26 @@ class SpectaclePeriodDetailedController extends Controller
      */
     public function acceptedApplicationsAction(Request $request, SpectaclePeriod $spectaclePeriod)
     {
-        $userApplications = $this->getDoctrine()->getRepository(UserApplication::class)->findCheckedFor($spectaclePeriod);
+        $userApplications = $this->getDoctrine()->getRepository(UserApplication::class)->findCheckedFor(
+            $spectaclePeriod
+        );
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin/spectaclePeriod/userApplications.html.twig', [
-                'spectaclePeriod' => $spectaclePeriod,
-                'userApplications' => $userApplications
-            ]);
+            return $this->render(
+                'admin/spectaclePeriod/userApplications.html.twig',
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplications' => $userApplications,
+                ]
+            );
         } else {
-            return $this->spectaclePeriodRenderFullView([
-                'spectaclePeriod' => $spectaclePeriod,
-                'userApplications' => $userApplications,
-                'content' => 'acceptedApplications'
-            ]);
+            return $this->spectaclePeriodRenderFullView(
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplications' => $userApplications,
+                    'content' => 'acceptedApplications',
+                ]
+            );
         }
     }
 
@@ -113,19 +133,26 @@ class SpectaclePeriodDetailedController extends Controller
      */
     public function notAcceptedApplicationsAction(Request $request, SpectaclePeriod $spectaclePeriod)
     {
-        $userApplications = $this->getDoctrine()->getRepository(UserApplication::class)->findNotCheckedFor($spectaclePeriod);
+        $userApplications = $this->getDoctrine()->getRepository(UserApplication::class)->findNotCheckedFor(
+            $spectaclePeriod
+        );
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin/spectaclePeriod/userApplications.html.twig', [
-                'spectaclePeriod' => $spectaclePeriod,
-                'userApplications' => $userApplications
-            ]);
+            return $this->render(
+                'admin/spectaclePeriod/userApplications.html.twig',
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplications' => $userApplications,
+                ]
+            );
         } else {
-            return $this->spectaclePeriodRenderFullView([
-                'spectaclePeriod' => $spectaclePeriod,
-                'userApplications' => $userApplications,
-                'content' => 'notAcceptedApplications'
-            ]);
+            return $this->spectaclePeriodRenderFullView(
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplications' => $userApplications,
+                    'content' => 'notAcceptedApplications',
+                ]
+            );
         }
     }
 
@@ -135,22 +162,31 @@ class SpectaclePeriodDetailedController extends Controller
      */
     public function addUserApplicationsAction(Request $request, SpectaclePeriod $spectaclePeriod)
     {
-        $form = $this->createForm(UserApplicationType::class, null, array(
-                'action' => $this->generateUrl('add_user_application_action'))
+        $form = $this->createForm(
+            UserApplicationType::class,
+            null,
+            array(
+                'action' => $this->generateUrl('add_user_application_by_admin_action'),
+            )
         );
 
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin/spectaclePeriod/addUserApplication.html.twig', [
-                'spectaclePeriod' => $spectaclePeriod,
-                'form' => $form->createView()
-            ]);
+            return $this->render(
+                'admin/spectaclePeriod/addUserApplication.html.twig',
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'form' => $form->createView(),
+                ]
+            );
         } else {
-            return $this->spectaclePeriodRenderFullView([
-                'spectaclePeriod' => $spectaclePeriod,
-                'form' => $form->createView(),
-                'content' => 'addUserApplication'
-            ]);
+            return $this->spectaclePeriodRenderFullView(
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'form' => $form->createView(),
+                    'content' => 'addUserApplication',
+                ]
+            );
         }
     }
 
@@ -160,23 +196,37 @@ class SpectaclePeriodDetailedController extends Controller
      * @ParamConverter("userApplication",  options={"mapping": {"userApplicationId":  "id"}})
      * @Method("GET")
      */
-    public function editUserApplicationsAction(Request $request, SpectaclePeriod $spectaclePeriod, UserApplication $userApplication)
-    {
-        $form = $this->createForm(UserApplicationType::class, $userApplication, array(
-                'action' => $this->generateUrl('user_application_edit_form_action', ['id' => $userApplication->getId()]))
+    public function editUserApplicationsAction(
+        Request $request,
+        SpectaclePeriod $spectaclePeriod,
+        UserApplication $userApplication
+    ) {
+        $form = $this->createForm(
+            UserApplicationType::class,
+            $userApplication,
+            array(
+                'action' => $this->generateUrl('user_application_edit_form_action', ['id' => $userApplication->getId()]),
+            )
         );
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin/spectaclePeriod/editUserApplication.html.twig', [
-                'spectaclePeriod' => $spectaclePeriod,
-                'form' => $form->createView()
-            ]);
+            return $this->render(
+                'admin/spectaclePeriod/editUserApplication.html.twig',
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplication' => $userApplication,
+                    'form' => $form->createView(),
+                ]
+            );
         } else {
-            return $this->spectaclePeriodRenderFullView([
-                'spectaclePeriod' => $spectaclePeriod,
-                'form' => $form->createView(),
-                'content' => 'editUserApplication'
-            ]);
+            return $this->spectaclePeriodRenderFullView(
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplication' => $userApplication,
+                    'form' => $form->createView(),
+                    'content' => 'editUserApplication',
+                ]
+            );
         }
     }
 
@@ -186,19 +236,27 @@ class SpectaclePeriodDetailedController extends Controller
      * @ParamConverter("userApplication",  options={"mapping": {"userApplicationId":  "id"}})
      * @Method("GET")
      */
-    public function showUserApplicationsAction(Request $request, SpectaclePeriod $spectaclePeriod, UserApplication $userApplication)
-    {
+    public function showUserApplicationsAction(
+        Request $request,
+        SpectaclePeriod $spectaclePeriod,
+        UserApplication $userApplication
+    ) {
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin/spectaclePeriod/showUserApplication.html.twig', [
-                'spectaclePeriod' => $spectaclePeriod,
-                'userApplication' => $userApplication
-            ]);
+            return $this->render(
+                'admin/spectaclePeriod/showUserApplication.html.twig',
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplication' => $userApplication,
+                ]
+            );
         } else {
-            return $this->spectaclePeriodRenderFullView([
-                'spectaclePeriod' => $spectaclePeriod,
-                'userApplication' => $userApplication,
-                'content' => 'showUserApplication'
-            ]);
+            return $this->spectaclePeriodRenderFullView(
+                [
+                    'spectaclePeriod' => $spectaclePeriod,
+                    'userApplication' => $userApplication,
+                    'content' => 'showUserApplication',
+                ]
+            );
         }
     }
 }

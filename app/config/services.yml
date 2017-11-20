@@ -8,8 +8,8 @@ services:
         class: AppBundle\Utils\Slugger
         public: true
 
-    price_calculator:
-        class: AppBundle\Utils\PriceCalculator
+    user_application_service:
+        class: AppBundle\Utils\UserApplicationService
         public: true
     # default configuration for services in *this* file
     _defaults:

@@ -34,6 +34,16 @@ class UserApplicationRepository extends \Doctrine\ORM\EntityRepository
             ')->getResult();
     }
 
+    public function findAllFor(SpectaclePeriod $spectaclePeriod)
+    {
+        return $this->getEntityManager()
+            ->createQuery('
+                SELECT u
+                FROM AppBundle:UserApplication u
+                WHERE u.spectaclePeriod = :spectacle
+                ORDER BY u.spectacleDate DESC
+            ')->setParameter('spectacle', $spectaclePeriod)->getResult();
+    }
 
     public function findCheckedFor(SpectaclePeriod $spectaclePeriod)
     {

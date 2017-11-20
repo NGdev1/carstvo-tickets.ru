@@ -10,9 +10,9 @@
         <button class="rightButton" onclick="editUserApplication('{{ item.id }}')">
             <span class="glyphicon glyphicon-edit"></span>
         </button>
-        <div class="title">{{ item.spectacleDate | date("d.m.Y")  }}</div>
+        <div class="title">ФИО: {{ item.fullName }}</div>
+        <div class="text">{{ item.spectacleDate | date("d.m.Y")  }}</div>
         <div class="text">Время: {{ item.spectacleTime }}</div>
-        <div class="text">ФИО: {{ item.fullName }}</div>
         <div class="text">Телефон: {{ item.phone }}</div>
         <div class="text">Кол-во питающихся: {{ item.numberOfEaters }}</div>
         <div class="text">Комментарий: {{ item.comment }}</div>
