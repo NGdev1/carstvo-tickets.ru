@@ -15,13 +15,12 @@
         <div class="text">Время: {{ item.spectacleTime }}</div>
         <div class="text">Телефон: {{ item.phone }}</div>
         <div class="text">Кол-во питающихся: {{ item.numberOfEaters }}</div>
-        <div class="text">Комментарий: {{ item.comment }}</div>
-
         {% if item.checkedByAdmin %}
             <div class="text">Подтверждена</div>
         {% else %}
             <div class="text">Не подтверждена</div>
         {% endif %}
+        <div class="text">Комментарий: {{ item.comment }}</div>
 
         <div class="title">Билеты:</div>
         {% for ticket in item.tickets %}

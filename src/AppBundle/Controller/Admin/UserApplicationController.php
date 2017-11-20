@@ -27,7 +27,7 @@ class UserApplicationController extends Controller
      * @Route("user-applications/add", name="add_user_application_by_admin_action")
      * @Method("POST")
      */
-    public function addUserApplicationAction(Request $request)
+    public function addUserApplicationByAdminAction(Request $request)
     {
         $request->setRequestFormat('json');
 
@@ -176,6 +176,7 @@ class UserApplicationController extends Controller
         }
 
         $userApplication->setCheckedByAdmin($request->get('checkedByAdmin') == 'on');
+        $userApplication->setComment($request->get('comment'));
 
         $spectacle = $entityManager->getRepository(SpectaclePeriod::class)->find($request->get('spectacle_id'));
         $userApplication->setSpectaclePeriod($spectacle);

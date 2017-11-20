@@ -7,6 +7,11 @@
 
     <input name="spectacle_id" type="hidden" value="{{ spectaclePeriod.id }}">
 
+    <label>
+        Комментарий:
+        <textarea name="comment" class="input_green" style="height: 50px;">{{ userApplication.comment }}</textarea>
+    </label>
+
     <div class="checkbox">
         <label for="checkedByAdmin">Проверено администратором</label>
         <input name="checkedByAdmin" class="js-checkbox" type="checkbox" id="checkedByAdmin"

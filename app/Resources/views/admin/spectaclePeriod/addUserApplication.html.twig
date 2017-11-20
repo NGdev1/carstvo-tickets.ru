@@ -6,6 +6,16 @@
 
     <input name="spectacle_id" type="hidden" value="{{ spectaclePeriod.id }}">
 
+    <div class="checkbox">
+        <label for="checkedByAdmin">Проверено администратором</label>
+        <input name="checkedByAdmin" class="js-checkbox" type="checkbox" id="checkedByAdmin" checked>
+    </div>
+
+    <label>
+        Комментарий:
+        <textarea name="comment" style="height: 50px;" class="input_green"></textarea>
+    </label>
+
     <div class="center"
          style="font-size: 20px; color: #474747">Кол-во билетов:
     </div>
@@ -19,3 +29,52 @@
 
     {{ form_end(form) }}
 </div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var form = $('#user_application_form');
+
+        form.submit(function () {
+            loadingIndicator.show();
+            contentContainer.hide();
+
+            var request = $.ajax({
+                url: '{{ path('add_user_application_by_admin_action')}}',
+                type: 'POST',
+                data: form.serialize()
+            });
+
+            request.always(function () {
+                loadingIndicator.hide();
+                contentContainer.show();
+            });
+
+            request.done(function (data) {
+                if (data.status == 'ok') {
+                    userApplications();
+                }
+            });
+
+            request.fail(function (data) {
+                showDialog('Ошибка с сервера', data.responseJSON.errors);
+            });
+
+            return false;
+        });
+
+        $.datepicker.setDefaults($.datepicker.regional["ru"]);
+
+        var startDate = new Date('{{ spectaclePeriod.startDate | date("Y-m-d") }}');
+        var endDate = new Date('{{ spectaclePeriod.endDate | date("Y-m-d") }}');
+
+        $('.js-datepicker').datepicker({
+            inline: true,
+            minDate: startDate,
+            maxDate: endDate
+        });
+
+        $('.js-checkbox').checkboxradio();
+    });
+
+</script>
