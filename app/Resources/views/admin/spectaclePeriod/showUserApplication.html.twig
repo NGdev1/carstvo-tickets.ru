@@ -1,26 +1,42 @@
 <div class="title center">Заявка:</div>
-<button class="rightButton" onclick="deleteUserApplication('{{ item.id }}')">
+<button class="rightButton" onclick="deleteUserApplication('{{ userApplication.id }}')">
     <span class="glyphicon glyphicon-trash"></span>
 </button>
-<button class="rightButton" onclick="editUserApplication('{{ item.id }}')">
+<button class="rightButton" onclick="editUserApplication('{{ userApplication.id }}')">
     <span class="glyphicon glyphicon-edit"></span>
 </button>
-<div class="title">{{ item.spectacleDate | date("d.m.Y") }}</div>
-<div class="text">Время: {{ item.spectacleTime }}</div>
-<div class="text">ФИО: {{ item.fullName }}</div>
-<div class="text">Телефон: {{ item.phone }}</div>
-<div class="text">Кол-во питающихся: {{ item.numberOfEaters }}</div>
-<div class="text">Комментарий: {{ item.comment }}</div>
+<div class="title">ФИО: {{ userApplication.fullName }}</div>
+<div class="text">{{ userApplication.spectacleDate | date("d.m.Y")  }}</div>
+<div class="text">Время: {{ userApplication.spectacleTime }}</div>
+<div class="text">Телефон: {{ userApplication.phone }}</div>
+<div class="text">Кол-во питающихся: {{ userApplication.numberOfEaters }}</div>
+<div class="text">Комментарий: {{ userApplication.comment }}</div>
+
+{% if userApplication.checkedByAdmin %}
+    <div class="text">Подтверждена</div>
+{% else %}
+    <div class="text">Не подтверждена</div>
+{% endif %}
+
 <div class="title">Билеты:</div>
-{% for ticket in item.tickets %}
+{% for ticket in userApplication.tickets if ticket.count != 0 %}
     <div class="text"> {{ ticket.priceCategory.name }} - {{ ticket.priceCategory.price }} рублей - {{ ticket.count }}
         шт
     </div>
 {% endfor %}
-<div class="text">Кол-во питающихся: {{ item.numberOfEaters }}</div>
-<div class="text">Общая стоимость: {{ item.cost }}</div>
+<div class="text">Кол-во питающихся: {{ userApplication.numberOfEaters }}</div>
+<div class="text">Общая стоимость: {{ userApplication.cost }}</div>
 
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        {% if userApplication.checkedByAdmin %}
+        setSelected('acceptedApplications');
+        {% else %}
+        setSelected('notAcceptedApplications');
+        {% endif %}
+    });
+
     function deleteUserApplication(id) {
         $.ajax({
             url: '{{ path('user_application_edit_action') }}',

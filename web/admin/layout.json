@@ -45,13 +45,6 @@
          "hasContent": true
       },
       {
-         "title": "Регистрация звонка",
-         "rightButton": "logout",
-         "leftButton": "back",
-         "url": "/admin/boards/user-applications/add",
-         "hasContent": true
-      },
-      {
          "title": "База именинников",
          "rightButton": "logout",
          "leftButton": "back",

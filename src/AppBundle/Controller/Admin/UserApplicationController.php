@@ -194,8 +194,7 @@ class UserApplicationController extends Controller
             $entityManager->getRepository(Ticket::class),
             $entityManager->getRepository(PriceCategory::class),
             $entityManager,
-            $userApplication,
-            $logger
+            $userApplication
         );
 
         $this->get('user_application_service')->calculateAndSetCost($userApplication);

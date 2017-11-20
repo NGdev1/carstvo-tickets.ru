@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\PriceCategory;
+use AppBundle\Entity\Ticket;
 use AppBundle\Entity\UserApplication;
 
 /**
@@ -13,6 +14,11 @@ use AppBundle\Entity\UserApplication;
  */
 class TicketRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param UserApplication $userApplication
+     * @param PriceCategory $priceCategory
+     * @return Ticket
+     */
     public function findInApplicationWithCategory(UserApplication $userApplication, PriceCategory $priceCategory)
     {
         return $this->getEntityManager()

@@ -34,14 +34,14 @@
                     <td>
                         <button class="button"
                                 onclick="showDialog('Данные о билетах',
-                                '{% for ticket in item.tickets %}<div> {{ ticket.priceCategory.name }} - {{ ticket.priceCategory.price }} рублей - {{ ticket.count }} шт</div>{% endfor %}<br/><div>Кол-во питающихся: {{ item.numberOfEaters }}</div><br/><div>Общая стоимость: {{ item.cost }}</div>'
+                                '{% for ticket in item.tickets if ticket.count != 0 %}<div> {{ ticket.priceCategory.name }} {{ ticket.priceCategory.price }} рублей: {{ ticket.count }} шт</div>{% endfor %}<br/><div>Кол-во питающихся: {{ item.numberOfEaters }}</div><br/><div>Общая стоимость: {{ item.cost }}</div>'
                                 )">
                             Смотреть</button>
                     </td>
                     <td>{% if item.checkedByAdmin %}Подтверждена{% else %}Не подтверждена{% endif %}</td>
                     <td>
                         <button class="button button-edit-table"
-                                onclick="window.open('')">
+                                onclick="window.open('{{ path('spectacle_period_show_user_application', {'spectacleId': item.spectaclePeriod.id, 'userApplicationId' : item.id}) }}')">
                             Подробно
                         </button>
                     </td>

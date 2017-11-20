@@ -53,14 +53,11 @@ class UserApplicationService
         for ($i = 0; $i < count($keys); $i++) {
             //и ставим кол-во билетов с ценовой категорией
             $ticketsCount = $ticketsArray[$keys[$i]];
-            if ($ticketsCount == 0 || $ticketsCount == null) {
-                break;
-            }
 
             $ticket = new Ticket();
 
             $ticket->setPriceCategory($priceCategoryRepository->find($keys[$i]));
-            $ticket->setCount($ticketsArray[$keys[$i]]);
+            $ticket->setCount($ticketsCount);
 
             $entityManager->persist($ticket);
             $ticket->setApplication($userApplication);
@@ -73,8 +70,7 @@ class UserApplicationService
         TicketRepository $ticketRepository,
         PriceCategoryRepository $priceCategoryRepository,
         ObjectManager $entityManager,
-        UserApplication $userApplication,
-        LoggerInterface $logger
+        UserApplication $userApplication
     ) {
 
         $keys = array_keys($ticketsArray);
@@ -86,25 +82,14 @@ class UserApplicationService
         //проходим по всем категориям
         for ($i = 0; $i < count($keys); $i++) {
             //и ставим кол-во билетов с ценовой категорией
-            $ticketsCount = $ticketsArray[$keys[$i]];
-            if ($ticketsCount == 0 || $ticketsCount == null) {
-                break;
-            }
-
             $priceCategory = $priceCategoryRepository->find($keys[$i]);
-            try {
-                $ticket = $ticketRepository->findInApplicationWithCategory($userApplication, $priceCategory);
-            } catch (NoResultException $exception){
-                $ticket = new Ticket();
 
-                $ticket->setPriceCategory($priceCategory);
-                $ticket->setApplication($userApplication);
-                $userApplication->addTicket($ticket);
+            $ticketsCount = $ticketsArray[$keys[$i]];
 
-                $entityManager->persist($ticket);
-            }
+            $ticket = $ticketRepository->findInApplicationWithCategory($userApplication, $priceCategory);
 
-            $ticket->setCount($ticketsArray[$keys[$i]]);
+            $ticket->setCount($ticketsCount);
+            $entityManager->flush();
         }
     }
 }

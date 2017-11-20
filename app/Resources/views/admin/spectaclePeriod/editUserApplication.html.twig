@@ -8,8 +8,9 @@
     <input name="spectacle_id" type="hidden" value="{{ spectaclePeriod.id }}">
 
     <div class="checkbox">
-    <label for="checkedByAdmin">Проверено администратором</label>
-    <input name="checkedByAdmin" class="js-checkbox" type="checkbox" id="checkedByAdmin" {% if userApplication.checkedByAdmin %}checked{% endif %}>
+        <label for="checkedByAdmin">Проверено администратором</label>
+        <input name="checkedByAdmin" class="js-checkbox" type="checkbox" id="checkedByAdmin"
+               {% if userApplication.checkedByAdmin %}checked{% endif %}>
     </div>
 
     <div class="center"
@@ -18,7 +19,8 @@
 
     {% for price in spectaclePeriod.ticketPrices %}
         <div class="text">{{ price.name }} ({{ price.price }} рублей)</div>
-        <input type="number" class="input_green" name="tickets[{{ price.id }}]" value="{% for ticket in userApplication.tickets if ticket.priceCategory == price %}{{ ticket.count }}{% endfor %}">
+        <input type="number" class="input_green" name="tickets[{{ price.id }}]"
+               value="{% for ticket in userApplication.tickets if ticket.priceCategory == price %}{{ ticket.count }}{% endfor %}">
     {% endfor %}
 
     <input type="submit" class="button-send" value="Сохранить"/>
@@ -30,6 +32,12 @@
 
     $(document).ready(function () {
         var form = $('#user_application_form');
+
+        {% if userApplication.checkedByAdmin %}
+        setSelected('acceptedApplications');
+        {% else %}
+        setSelected('notAcceptedApplications');
+        {% endif %}
 
         form.submit(function () {
             loadingIndicator.show();

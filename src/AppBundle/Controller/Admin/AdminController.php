@@ -119,23 +119,4 @@ class AdminController extends Controller
             return $this->indexAction();
         }
     }
-
-    /**
-     * @Route("/boards/user-applications/add")
-     * @Method("GET")
-     */
-    public function userApplicationAddBoardAction(Request $request)
-    {
-        if ($request->isXmlHttpRequest()) {
-            $form = $this->createForm(UserApplicationType::class, null, array(
-                'action' => $this->generateUrl('add_user_application_action'))
-            );
-
-            return $this->render('admin/boards/add_user_application.html.twig', [
-                'form' => $form->createView()
-            ]);
-        } else {
-            return $this->indexAction();
-        }
-    }
 }
