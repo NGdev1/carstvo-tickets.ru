@@ -7,7 +7,7 @@
    "menu": [
       {
          "title": "Периоды представлений",
-         "rightButton": "logout",
+         "rightButton": "add",
          "leftButton": "back",
          "url": "/admin/boards/spectacle-periods",
          "hasContent": true,
@@ -23,7 +23,7 @@
       },
       {
          "title": "Ценовые категории",
-         "rightButton": "logout",
+         "rightButton": "add",
          "leftButton": "back",
          "url": "/admin/boards/price-categories",
          "hasContent": true,
@@ -46,7 +46,7 @@
       },
       {
          "title": "База именинников",
-         "rightButton": "logout",
+         "rightButton": "add",
          "leftButton": "back",
          "url": "/admin/boards/birthday-boys",
          "hasContent": true,

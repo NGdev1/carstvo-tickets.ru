@@ -37,16 +37,21 @@
     });
 
     function deleteUserApplication(id) {
-        $.ajax({
-            url: '{{ path('user_application_edit_action') }}',
-            type: "DELETE",
-            data: {
-                id: id
-            }
-        }).done(function (data) {
-            if (data.status == 'ok') {
-                acceptedApplications();
-            }
+        askUser('Удалить?', 'Заявка удалится с билетами', function () {
+            $(this).dialog("close");
+            $.ajax({
+                url: '{{ path('user_application_edit_action') }}',
+                type: "DELETE",
+                data: {
+                    id: id
+                }
+            }).done(function (data) {
+                if (data.status == 'ok') {
+                    userApplications();
+                }
+            });
+        }, function () {
+            $(this).dialog("close");
         });
     }
 </script>

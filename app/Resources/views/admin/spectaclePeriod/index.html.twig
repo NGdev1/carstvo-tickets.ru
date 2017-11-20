@@ -69,6 +69,23 @@
             });
         }
 
+        function askUser(title, message, yes, no) {
+            var dialogMessage = $( "<div/>" );
+            var messageContainer = $('<p/>', {
+                html: message
+            });
+            dialogMessage.append(messageContainer);
+
+            dialogMessage.dialog({
+                title: title,
+                modal: true,
+                buttons: {
+                    "Да": yes,
+                    "Нет": no
+                }
+            });
+        }
+
         function setSelected(selected) {
             $('.selected').removeClass('selected');
             $('#' + selected).addClass('selected', 100);

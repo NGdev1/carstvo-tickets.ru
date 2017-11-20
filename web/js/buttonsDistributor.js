@@ -92,11 +92,17 @@ function buildInterface(menu, path) {
 function loadContent(url) {
     lastLoadedUrl = url;
     if (url != undefined) {
-        $.ajax({
+        var request = $.ajax({
             url: url,
             type: "GET"
-        }).done(function (data) {
+        });
+
+        request.done(function (data) {
             contentContainer.html(data);
+        });
+
+        request.fail(function (data) {
+            showDialog('Ошибка с сервера', data.responseJSON.errors);
         });
     }
 }
@@ -104,11 +110,13 @@ function loadContent(url) {
 function getButtonWIthType(type) {
     for (var i = 0; i < buttons.length; i++) {
         if (type == buttons[i].type) {
-            return $('<a/>', {
+            var btn = $('<a/>', {
                 'class': buttons[i].class,
-                'text': buttons[i].text,
                 'onclick': buttons[i].onclick
             });
+
+            btn.append(buttons[i].text);
+            return btn
         }
     }
 

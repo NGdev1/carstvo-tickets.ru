@@ -7,11 +7,12 @@
         <button class="rightButton" onclick="deleteUserApplication('{{ item.id }}')">
             <span class="glyphicon glyphicon-trash"></span>
         </button>
-        <button class="rightButton" onclick="loadContent('{{ path('spectacle_period_edit_user_application', {'spectacleId': spectaclePeriod.id, 'userApplicationId': item.id}) }}', 'Редактировать заявку', true)">
+        <button class="rightButton"
+                onclick="loadContent('{{ path('spectacle_period_edit_user_application', {'spectacleId': spectaclePeriod.id, 'userApplicationId': item.id}) }}', 'Редактировать заявку', true)">
             <span class="glyphicon glyphicon-edit"></span>
         </button>
         <div class="title">ФИО: {{ item.fullName }}</div>
-        <div class="text">{{ item.spectacleDate | date("d.m.Y")  }}</div>
+        <div class="text">{{ item.spectacleDate | date("d.m.Y") }}</div>
         <div class="text">Время: {{ item.spectacleTime }}</div>
         <div class="text">Телефон: {{ item.phone }}</div>
         <div class="text">Кол-во питающихся: {{ item.numberOfEaters }}</div>
@@ -24,7 +25,9 @@
 
         <div class="title">Билеты:</div>
         {% for ticket in item.tickets %}
-            <div class="text"> {{ ticket.priceCategory.name }} - {{ ticket.priceCategory.price }} рублей - {{ ticket.count }} шт</div>
+            <div class="text"> {{ ticket.priceCategory.name }} - {{ ticket.priceCategory.price }} рублей
+                - {{ ticket.count }} шт
+            </div>
         {% endfor %}
         <div class="text">Кол-во питающихся: {{ item.numberOfEaters }}</div>
         <div class="text">Общая стоимость: {{ item.cost }}</div>
@@ -39,16 +42,21 @@
 
 <script type="text/javascript">
     function deleteUserApplication(id) {
-        $.ajax({
-            url: '{{ path('user_application_edit_action') }}',
-            type: "DELETE",
-            data: {
-                id: id
-            }
-        }).done(function (data) {
-            if (data.status == 'ok') {
-                userApplications();
-            }
+        askUser('Удалить?', 'Заявка удалится с билетами', function () {
+            $(this).dialog("close");
+            $.ajax({
+                url: '{{ path('user_application_edit_action') }}',
+                type: "DELETE",
+                data: {
+                    id: id
+                }
+            }).done(function (data) {
+                if (data.status == 'ok') {
+                    userApplications();
+                }
+            });
+        }, function () {
+            $(this).dialog("close");
         });
     }
 </script>
