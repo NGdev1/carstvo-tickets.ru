@@ -1,23 +1,29 @@
-{% if priceCategories %}
-    <div>Ценовые категории:</div>
+{% if birthdayBoys %}
+    <div>База иненинников:</div>
 
     <div id="table-container">
         <table id="priceCategories">
             <thead>
             <tr>
                 <th onclick="sortTable($('#spectacles').find('tbody'), 0, 'tabledit-span', 'number')">#</th>
-                <th onclick="sortTable($('#spectacles').find('tbody'), 1, 'tabledit-span', 'string')">Категория</th>
-                <th onclick="sortTable($('#spectacles').find('tbody'), 2, 'tabledit-span', 'number')">Цена</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 1, 'tabledit-span', 'string')">ФИО</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 2, 'tabledit-span', 'string')">Телефон</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 3, 'tabledit-span', 'string')">Дата рождения</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 4, 'tabledit-span', 'string')">Комментарий</th>
+                <th onclick="sortTable($('#spectacles').find('tbody'), 5, 'tabledit-span', 'number')">Возраст</th>
             </tr>
             </thead>
 
             <tbody>
 
-            {% for item in priceCategories %}
+            {% for item in birthdayBoys %}
                 <tr>
                     <td>{{ item.id }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.price }}</td>
+                    <td>{{ item.fullName }}</td>
+                    <td>{{ item.phone }}</td>
+                    <td class="tabledit-input-date">{{ item.birthday | date("d.m.Y") }}</td>
+                    <td>{{ item.comment }}</td>
+                    <td>{{ ages[item.id] }}</td>
                 </tr>
             {% endfor %}
 
@@ -29,7 +35,7 @@
 
     <script type="text/javascript">
         $('#priceCategories').Tabledit({
-            url: '{{ path('price_categories_edit_action') }}',
+            url: '{{ path('birthday_boys_edit_from_table_action') }}',
             inputClass: 'input_green',
             editButton: true,
             buttons: {
@@ -61,14 +67,25 @@
             },
             columns: {
                 identifier: [0, 'id'],
-                editable: [[1, 'name'], [2, 'price']]
+                editable: [[1, 'fullName'], [2, 'phone'], [3, 'birthday'], [4, 'comment']]
             }
+        });
+
+        $('.tabledit-input-date').each(function () {
+            $row = $(this);
+
+            $row.find('input').addClass('js-datepicker');
+        });
+
+        $('.js-datepicker').datepicker({
+            changeMonth: true,
+            changeYear: true
         });
 
     </script>
 
 {% else %}
 
-    <div class="text center">Нет ценовых категорий</div>
+    <div class="text center">Нет именинников в базе</div>
 
 {% endif %}

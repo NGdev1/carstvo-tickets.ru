@@ -1,0 +1,70 @@
+<div id="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>ФИО</th>
+            <th>Телефон</th>
+            <th>Дата рождения</th>
+            <th>Комментарий</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td>#</td>
+            <td><input id="fullName" class="input_green"/></td>
+            <td><input id="phone" class="input_green"/></td>
+            <td><input id="birthday" class="input_green js-datepicker"/></td>
+            <td><input id="comment" class="input_green"/></td>
+            <td>
+                <button class="button button-save" onclick="sendAjax()">Сохранить</button>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    function sendAjax() {
+        var fullName = $('#fullName').val();
+        if (!fullName) return;
+
+        var phone = $('#phone').val();
+        if (!phone) return;
+
+        var birthday = $('#birthday').val();
+        if (!birthday) return;
+
+        var comment = $('#comment').val();
+
+        var request = $.ajax({
+            url: '{{ path('add_birthday_boy_action') }}',
+            type: 'POST',
+            data: {
+                'fullName': fullName,
+                'phone': phone,
+                'birthday': birthday,
+                'comment': comment
+            }
+        });
+
+        request.done(function (data) {
+            if (data.status == 'ok') {
+                back();
+            }
+        });
+
+        request.fail(function (data) {
+            showDialog('Ошибка с сервера', data.responseJSON.errors);
+        });
+    }
+
+    $('.js-datepicker').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        yearRange: '1950:now'
+    });
+</script>

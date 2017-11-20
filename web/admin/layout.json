@@ -48,8 +48,17 @@
          "title": "База именинников",
          "rightButton": "logout",
          "leftButton": "back",
-         "url": "/admin/boards/birthdayboys",
-         "hasContent": false
+         "url": "/admin/boards/birthday-boys",
+         "hasContent": true,
+         "menu" : [
+            {
+               "title": "Добавить",
+               "rightButton": "logout",
+               "leftButton": "back",
+               "url": "/admin/boards/birthday-boys/add",
+               "hasContent": true
+            }
+         ]
       },
       {
          "title": "Кассир",

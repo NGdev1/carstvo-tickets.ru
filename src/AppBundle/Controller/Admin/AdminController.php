@@ -2,11 +2,15 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\BirthdayBoy;
 use AppBundle\Entity\PriceCategory;
 use AppBundle\Entity\SpectaclePeriod;
 use AppBundle\Entity\UserApplication;
 use AppBundle\Form\SpectaclePeriodType;
 use AppBundle\Form\UserApplicationType;
+use DateTime;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -115,6 +119,45 @@ class AdminController extends Controller
                     'userApplications' => $userApplications,
                 ]
             );
+        } else {
+            return $this->indexAction();
+        }
+    }
+
+    /**
+     * @Route("/boards/birthday-boys")
+     * @Method("GET")
+     */
+    public function showBirthdayBoysAction(Request $request)
+    {
+        $birthdayBoys = $this->getDoctrine()->getRepository(BirthdayBoy::class)->findAll();
+
+        $ages = array();
+        foreach ($birthdayBoys as $birthdayBoy){
+            $ages[$birthdayBoy->getId()] = $birthdayBoy->getBirthday()->diff(new DateTime('now'))->y;
+        }
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render(
+                'admin/boards/birthday_boys.html.twig',
+                [
+                    'birthdayBoys' => $birthdayBoys,
+                    'ages' => $ages
+                ]
+            );
+        } else {
+            return $this->indexAction();
+        }
+    }
+
+    /**
+     * @Route("/boards/birthday-boys/add")
+     * @Method("GET")
+     */
+    public function birthdayBoyAddBoardAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('admin/boards/add_birthday_boy.html.twig');
         } else {
             return $this->indexAction();
         }
